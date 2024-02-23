@@ -7,18 +7,6 @@ const PrivateRoute = ({ children }) => {
     (state) => state.auth
   );
 
-  useEffect(() => {
-    if (localStorage) {
-      const name = localStorage.getItem("name");
-      const email = localStorage.getItem("email");
-      const isLoggedIn = localStorage.getItem("isLoggedIn");
-      console.log({ name, email, isLoggedIn });
-      if (name && email && isLoggedIn) {
-        handleUserLoginExternally({ name, email });
-      }
-    }
-  }, []);
-
   if (isLoggedIn) return children;
   else return <Navigate to={"/login"} />;
 };
