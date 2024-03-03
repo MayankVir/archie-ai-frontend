@@ -10,7 +10,7 @@ const index = ({ fontSize }) => {
         }),
       }}
     >
-      ARCHIE.AI
+      Archie AI
     </div>
   );
 };

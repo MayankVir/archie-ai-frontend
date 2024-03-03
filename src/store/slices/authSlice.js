@@ -2,6 +2,8 @@ import { STORE_NAMES } from "../../constants/store";
 // import { loginUserService } from "../../services/auth";
 import { updateState } from "../common";
 import { SIGN_IN, SIGN_UP } from "../../constants/auth";
+import { createUserService, loginUserService } from "../../services/auth";
+import { errorToast } from "../../utils/toast";
 
 const { AUTH } = STORE_NAMES;
 
@@ -37,7 +39,14 @@ export const createAuthSlice = (set) => ({
       localStorage.setItem("email", email);
     },
 
-    handleAuthentication: ({ email, password, confirmPassword = "", type }) => {
+    handleAuthentication: async ({
+      name: userName,
+      email,
+      password,
+      confirmPassword = "",
+      isLoggingIn,
+    }) => {
+      console.log({ email, password });
       set((prevState) => ({
         ...prevState,
         [AUTH]: {
@@ -45,36 +54,48 @@ export const createAuthSlice = (set) => ({
           isLoading: true,
         },
       }));
+      let response;
 
-      // try {
-      //   if (type === SIGN_IN) {
-      //     // call sign in handler
-      //     const response = loginUser();
-      //     set((prevState) => ({
-      //       ...prevState,
-      //       [AUTH]: {
-      //         ...prevState[AUTH],
-      //         name,
-      //         token,
-      //         type,
-      //         isLoggedIn: true,
-      //         isAdmin: type === "A" ? true : false,
-      //       },
-      //     }));
-      //   }
+      try {
+        if (isLoggingIn === false) {
+          response = await createUserService({
+            // name: userName,
+            email,
+            password,
+            password1: confirmPassword,
+          });
+        }
+        response = await loginUserService({ email, password });
 
-      //   if (type === SIGN_UP) {
-      //     // call sign up handler
-      //   }
-      // } catch (e) {
-      //   set((prevState) => ({
-      //     ...prevState,
-      //     auth: {
-      //       ...prevState[AUTH],
-      //       isLoading: false,
-      //     },
-      //   }));
-      // }
+        const { name, token, type } = response.data;
+
+        set((prevState) => ({
+          ...prevState,
+          [AUTH]: {
+            ...prevState[AUTH],
+            name,
+            token,
+            type,
+            isLoggedIn: true,
+            isAdmin: type === "A" ? true : false,
+          },
+        }));
+        localStorage.setItem("name", name);
+        localStorage.setItem("token", token);
+        localStorage.setItem("type", type);
+        return Promise.resolve({ status: true });
+      } catch (e) {
+        errorToast({
+          message: e?.response?.data?.msg ?? "Something went wrong",
+        });
+        // set((prevState) => ({
+        //   ...prevState,
+        //   auth: {
+        //     ...prevState[AUTH],
+        //     isLoading: false,
+        //   },
+        // }));
+      }
     },
 
     setStateOnLoad: (key, value) => {

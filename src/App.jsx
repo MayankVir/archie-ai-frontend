@@ -16,7 +16,6 @@ function App() {
       const name = localStorage.getItem("name");
       const email = localStorage.getItem("email");
       const isLoggedIn = localStorage.getItem("isLoggedIn");
-      console.log({ name, email, isLoggedIn });
       if (name && email && isLoggedIn) {
         handleUserLoginExternally({ name, email });
       }

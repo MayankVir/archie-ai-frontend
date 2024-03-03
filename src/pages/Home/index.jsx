@@ -4,12 +4,16 @@ import Title from "../../components/Title";
 import useStore from "../../store/store";
 import Back from "../../assets/icons/svg/back.svg";
 import { redirect, useNavigate, useSearchParams } from "react-router-dom";
+import { errorToast } from "../../utils/toast";
 
 const index = () => {
+  let pollingTimeout;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isLoggedIn } = useStore((state) => state.auth);
-  const { handleSetPrompt } = useStore((state) => state.data);
+  const { submitQuery, handleLongPollOutputStatus, currentConversationId } =
+    useStore((state) => state.data);
+  const [isPolling, setIsPolling] = useState(false);
 
   const [prompt, setPrompt] = useState("");
 
@@ -18,6 +22,30 @@ const index = () => {
     if (queryPrompt?.length === 0) return;
     else setPrompt(queryPrompt);
   }, [searchParams]);
+
+  useEffect(() => {
+    if (isPolling) {
+      pollingTimeout = setTimeout(
+        () => handleLongPollOutputStatus({ id: currentConversationId }),
+        2000
+      );
+    }
+    // else {
+    //   clearInterval(pollingTimeout);
+    // }
+  }, [isPolling]);
+
+  const handleSubmitQuery = async () => {
+    if (prompt.length === 0) return;
+
+    if (!isLoggedIn) return navigate("/login?prompt=" + prompt);
+    try {
+      await submitQuery({ prompt, navigate });
+      setIsPolling(true);
+    } catch (err) {
+      // errorToast()
+    }
+  };
 
   return (
     <div className="m-8 md:mx-32 sm:mx-16 mx-8">
@@ -41,14 +69,7 @@ const index = () => {
             src={Back}
             alt="back arrow"
             className="text-center absolute right-4 bottom-3 w-[32px] h-[24px] bg-black text-white rounded-md cursor-pointer increase-scale-1"
-            onClick={() => {
-              if (prompt.length === 0) return;
-
-              if (!isLoggedIn) return navigate("/login?prompt=" + prompt);
-
-              handleSetPrompt({ prompt });
-              navigate("/summary");
-            }}
+            onClick={handleSubmitQuery}
           >
             &#x2192;
           </span>

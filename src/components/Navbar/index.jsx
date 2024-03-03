@@ -71,7 +71,7 @@ export const BackBtn = () => {
       to={"/"}
       className=" flex gap-2 p-3 py-1 rounded-lg bg-primary text-gray-400 hover:text-white transition-all text-sm cursor-pointer"
     >
-      <img src={Back} alt="back btn" /> <span>Go Back</span>
+      <img src={Back} alt="back btn" /> <span>Edit Prompt</span>
     </Link>
   );
 };
