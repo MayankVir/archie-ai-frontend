@@ -21,15 +21,17 @@ const index = ({ code }) => {
           <button>{copied ? "Copied!" : "Copy"}</button>
         </CopyToClipboard>
       </div>
-      <SyntaxHighlighter
-        customStyle={{
-          margin: 0,
-        }}
-        language="jsx"
-        style={vscDarkPlus}
-      >
-        {code}
-      </SyntaxHighlighter>
+      <div>
+        <SyntaxHighlighter
+          customStyle={{
+            margin: 0,
+          }}
+          language="jsx"
+          style={vscDarkPlus}
+        >
+          {code}
+        </SyntaxHighlighter>
+      </div>
     </div>
   );
 };

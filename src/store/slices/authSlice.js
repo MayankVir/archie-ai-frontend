@@ -19,24 +19,34 @@ export const createAuthSlice = (set) => ({
     type: null,
 
     handleLogout: () => {
-      localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("name");
-      localStorage.removeItem("email");
+      localStorage.removeItem("type");
+      localStorage.removeItem("token");
+      updateState(set, AUTH, {
+        isLoading: null,
+        isLoggedIn: null,
+        isAdmin: null,
+        isLogout: null,
+        name: null,
+        email: null,
+        token: null,
+        type: null,
+      });
     },
 
-    handleUserLoginExternally: ({ name, email }) => {
+    handleUserLoginExternally: ({ name, type, token }) => {
       updateState(set, AUTH, {
         isLoggedIn: true,
         name,
-        email,
-        type: "A",
+        type,
         isAdmin: true,
         isLoading: false,
         isLogout: false,
+        token,
       });
-      localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("name", name);
-      localStorage.setItem("email", email);
+      localStorage.setItem("type", type);
+      localStorage.setItem("token", token);
     },
 
     handleAuthentication: async ({
@@ -46,7 +56,6 @@ export const createAuthSlice = (set) => ({
       confirmPassword = "",
       isLoggingIn,
     }) => {
-      console.log({ email, password });
       set((prevState) => ({
         ...prevState,
         [AUTH]: {
@@ -59,7 +68,7 @@ export const createAuthSlice = (set) => ({
       try {
         if (isLoggingIn === false) {
           response = await createUserService({
-            // name: userName,
+            name: userName,
             email,
             password,
             password1: confirmPassword,

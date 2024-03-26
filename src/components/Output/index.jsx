@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useStore from "../../store/store";
-import Output from "../../assets/icons/svg/output.png";
 import Code from "../Code";
+import { instance } from "@viz-js/viz";
 
 const index = () => {
-  const { output, prompt } = useStore((state) => state.data);
+  const { code, dot_file_contents, key_components, next_steps, prompt } =
+    useStore((state) => state.data);
 
-  const { code, codeSummary } = output;
+  useEffect(() => {
+    if (dot_file_contents.length > 0)
+      instance().then((viz) => {
+        const svg = viz.renderSVGElement(dot_file_contents);
+
+        document.getElementById("graph")?.replaceChildren(svg);
+      });
+  }, [dot_file_contents]);
 
   return (
     <div className="flex gap-3 -mt-10 md:flex-row flex-col w-full">
@@ -17,9 +25,8 @@ const index = () => {
           <span>{prompt}</span>
         </div>
         <div>
-          <Code code={code} />
+          <Code code={dot_file_contents} />
         </div>
-        <div className="text-white text-sm">{codeSummary}</div>
       </div>
 
       {/* Right */}
@@ -27,12 +34,15 @@ const index = () => {
         <div>
           <h5 className="text-gray-400 text-sm">Architecture Diagram</h5>
         </div>
-        <div className="w-full flex items-center justify-center my-8">
-          <img
-            src={Output}
-            alt="output image"
-            className="rounded-lg w-full h-full"
-          />
+        <div className="w-full flex flex-col  my-8 " id="graph"></div>
+
+        <div className="text-white my-4">
+          <div className="font-semibold underline">Key Components</div>
+          <span className="text-sm">{key_components}</span>
+        </div>
+        <div className="text-white my-4">
+          <div className="font-semibold underline">Next Steps</div>
+          <span className="text-sm">{next_steps}</span>
         </div>
       </div>
     </div>

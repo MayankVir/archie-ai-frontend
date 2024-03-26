@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Title from "../../components/Title";
 import OrSeparator from "../../components/Separator/OrSeparator";
 import GoogleLoginButton from "../../components/Authentication/GoogleLogin";
 import GithubLoginButton from "../../components/Authentication/GithubLogin";
 import useStore from "../../store/store";
 import { successToast } from "../../utils/toast";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Navigate,
+  redirect,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 const index = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { pathname } = location;
+
   const [isLoggingIn, setIsLoggingIn] = useState(true);
   const [formError, setFormError] = useState({
     name: "",
@@ -23,7 +32,7 @@ const index = () => {
     password: "",
     confirmPassword: "",
   });
-  const { handleAuthentication } = useStore((state) => state.auth);
+  const { handleAuthentication, isLoggedIn } = useStore((state) => state.auth);
 
   const handleFormDataChange = (e) => {
     setFormError((prev) => ({ ...prev, [e.target.name]: "" }));
@@ -82,7 +91,7 @@ const index = () => {
     if (isUserDataValidated === false) return;
 
     const { status } = await handleAuthentication({
-      // name: formData.name,
+      name: formData.name,
       email: formData.email,
       password: formData.password,
       confirmPassword: formData.confirmPassword,
@@ -95,11 +104,13 @@ const index = () => {
     }
   };
 
+  if (pathname === "/login" && isLoggedIn) return <Navigate to={"/"} />;
+
   return (
     <div className="flex justify-center items-center flex-col h-[100vh] w-[100vw]">
       <Title />
       <div className="flex gap-4 flex-col p-8 m-2 rounded-lg w-[450px] bg-primary">
-        {/* {!isLoggingIn && (
+        {!isLoggingIn && (
           <div>
             <input
               type="text"
@@ -120,7 +131,7 @@ const index = () => {
               <span className="text-sm text-red-500">{formError.name}</span>
             )}
           </div>
-        )} */}
+        )}
         <div>
           <input
             type="email"
@@ -194,7 +205,7 @@ const index = () => {
               style={{
                 width: "calc(100% - 10px)",
               }}
-              onClick={() => handleUserAuthentication()}
+              onClick={handleUserAuthentication}
             >
               {isLoggingIn ? "Sign In" : "Sign Up"}
             </button>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:4789/api/";
+axios.defaults.baseURL = "http://localhost:6500/api/";
 
 export const loginUserService = (data) => axios.post("/auth", data);
 

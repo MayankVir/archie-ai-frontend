@@ -1,27 +1,36 @@
 import React, { useState } from "react";
-import History from "../../assets/icons/svg/history.svg";
-import Back from "../../assets/icons/svg/back.svg";
 import Down from "../../assets/icons/svg/down.svg";
+import Menu from "../../assets/icons/svg/menu.svg";
 import useStore from "../../store/store";
 import { Link } from "react-router-dom";
 import Title from "../../components/Title";
 
-const index = ({ showBackBtn = false, showTitle = false }) => {
+const index = ({
+  showBackBtn = false,
+  showTitle = false,
+  style = {},
+  showMenu = true,
+}) => {
   const { isLoggedIn, name, handleLogout } = useStore((state) => state.auth);
+  const { toggleSidebar } = useStore((state) => state.data);
   const [showLogout, setShowLogout] = useState(false);
 
   return (
-    <div className="flex items-center justify-between my-16 mt-4 ">
-      {showBackBtn || showTitle ? (
+    <div
+      className=" relative flex items-center justify-between my-16 mt-4 "
+      style={style}
+    >
+      {showBackBtn || showTitle || showMenu ? (
         <div className="flex gap-4 items-center justify-center">
+          {showMenu && (
+            <div onClick={() => toggleSidebar(true)} className="cursor-pointer">
+              <img src={Menu} alt="menu icon" />
+            </div>
+          )}
           {showTitle && <Title fontSize={"28px"} />}
           {showBackBtn && <BackBtn />}
         </div>
-      ) : (
-        <div>
-          <img src={History} alt="history icon" className="cursor-pointer" />
-        </div>
-      )}
+      ) : null}
 
       <div className=" text-white relative flex flex-col gap-2 items-end">
         {isLoggedIn ? (
@@ -66,12 +75,15 @@ const index = ({ showBackBtn = false, showTitle = false }) => {
 export default index;
 
 export const BackBtn = () => {
+  const { toggleEditingPrompModal } = useStore((state) => state.data);
+  return <></>;
+
   return (
-    <Link
-      to={"/"}
-      className=" flex gap-2 p-3 py-1 rounded-lg bg-primary text-gray-400 hover:text-white transition-all text-sm cursor-pointer"
+    <div
+      onClick={() => toggleEditingPrompModal(true)}
+      className=" flex items-center gap-2 p-3 py-1 rounded-lg bg-primary text-gray-400 hover:text-white transition-all text-sm cursor-pointer"
     >
-      <img src={Back} alt="back btn" /> <span>Edit Prompt</span>
-    </Link>
+      <span>Edit Prompt</span>
+    </div>
   );
 };

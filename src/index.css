@@ -42,3 +42,30 @@ body {
   transform: scale(1.1);
   transition: all 200ms ease-in;
 }
+
+.faded-text {
+  position: relative;
+  display: inline-block;
+  overflow: hidden; /* Ensure text does not overflow */
+}
+
+.faded-text::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 30%; /* Adjust the width of the gradient to control the fading effect */
+  height: 100%;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    #404040
+  ); /* Adjust the gradient direction */
+  pointer-events: none; /* Ensure that the gradient overlay doesn't interfere with mouse events */
+}
+
+#graph > svg {
+  width: 100%;
+  height: 300px;
+}
