@@ -6,20 +6,6 @@ const authHeaders = () => ({
   "x-auth-token": localStorage.getItem("token") ?? "",
 });
 
-export const submitQueryService = (data) =>
-  axios.post("/conversation", data, {
-    headers: authHeaders(),
-  });
-
-export const getConversationsService = (data) =>
-  axios.get("/conversation", {
-    headers: authHeaders(),
-  });
-
-export const getConversationDetailsService = (id) =>
-  axios.get("/conversation/" + id, {
-    headers: authHeaders(),
-  });
 
 // new Promise((resolve, reject) => {
 //   // setTimeout(() => {
