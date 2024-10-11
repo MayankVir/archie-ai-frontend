@@ -7,13 +7,6 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import PrivateRoute from "./PrivateRoute";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import Summary from "./pages/Summary";
-import { useEffect } from "react";
-import useStore from "./store/store";
-import NotFound from "./pages/NotFound";
 
 function App() {
   const { handleUserLoginExternally } = useStore((state) => state.auth);
